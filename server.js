@@ -1,5 +1,61 @@
+// // require("dotenv").config();
+// // const http = require("http");
+// // const app = require("./app");
+// // const { connectDB, sequelize } = require("./config/db");
+
+// // require("./association");
+// // require("./src/entity/user");
+// // require("./src/entity/conversation");
+// // require("./src/entity/conversation_member");
+// // require("./src/entity/message");
+
+// // const server = http.createServer(app);
+
+// // require("./src/socket/socket")(server);
+
+// // const startServer = async () => {
+// //   try {
+// //     await connectDB();
+// //     await sequelize.sync();
+// //     const PORT = process.env.PORT || 5000;
+// //     server.listen(PORT, () => console.log(`Server running on ${PORT}`));
+// //   } catch (err) {
+// //     console.error(err);
+// //   }
+// // };
+
+// // startServer();
+
+// // module.exports = { server };
+
+
+// require("dotenv").config();
+// const app = require("./app");
+// const { connectDB, sequelize } = require("./config/db");
+
+// require("./association");
+// require("./src/entity/user");
+// require("./src/entity/conversation");
+// require("./src/entity/conversation_member");
+// require("./src/entity/message");
+
+// const startServer = async () => {
+//   try {
+//     await connectDB();
+//     await sequelize.sync();
+//     console.log("Database connected");
+//   } catch (err) {
+//     console.error(err);
+//   }
+// };
+
+// startServer();
+
+// module.exports = app;
+
+
 require("dotenv").config();
-const http = require("http");
+
 const app = require("./app");
 const { connectDB, sequelize } = require("./config/db");
 
@@ -9,21 +65,17 @@ require("./src/entity/conversation");
 require("./src/entity/conversation_member");
 require("./src/entity/message");
 
-const server = http.createServer(app);
+let isConnected = false;
 
-require("./src/socket/socket")(server);
-
-const startServer = async () => {
-  try {
+async function initDB() {
+  if (!isConnected) {
     await connectDB();
     await sequelize.sync();
-    const PORT = process.env.PORT || 5000;
-    server.listen(PORT, () => console.log(`Server running on ${PORT}`));
-  } catch (err) {
-    console.error(err);
+    isConnected = true;
   }
+}
+
+module.exports = async (req, res) => {
+  await initDB();
+  return app(req, res);
 };
-
-startServer();
-
-module.exports = { server };
