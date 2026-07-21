@@ -1,6 +1,65 @@
+// // require("dotenv").config();
+// // const http = require("http");
+// // const app = require("./app");
+// // const { connectDB, sequelize } = require("./config/db");
+
+// // require("./association");
+// // require("./src/entity/user");
+// // require("./src/entity/conversation");
+// // require("./src/entity/conversation_member");
+// // require("./src/entity/message");
+
+// // const server = http.createServer(app);
+
+// // require("./src/socket/socket")(server);
+
+// // const startServer = async () => {
+// //   try {
+// //     await connectDB();
+// //     await sequelize.sync();
+// //     const PORT = process.env.PORT || 5000;
+// //     server.listen(PORT, () => console.log(`Server running on ${PORT}`));
+// //   } catch (err) {
+// //     console.error(err);
+// //   }
+// // };
+
+// // startServer();
+
+// // module.exports = { server };
+
+
+// // require("dotenv").config();
+
+// // const express = require("express");
+// // const cors = require("cors");
+
+// // const { connectDB } = require("./config/db");
+
+// // const app = express();
+
+// // app.use(cors());
+// // app.use(express.json());
+
+// // connectDB();
+
+// // // Routes
+// // app.use("/api/users", require("./routes/userRoutes"));
+// // app.use("/api/chat", require("./routes/chatRoutes"));
+
+// // app.get("/", (req, res) => {
+// //   res.send("API is running");
+// // });
+
+// // // IMPORTANT FOR VERCEL
+// // module.exports = app;
+
+
 // require("dotenv").config();
-// const http = require("http");
-// const app = require("./app");
+
+// const express = require("express");
+// const cors = require("cors");
+
 // const { connectDB, sequelize } = require("./config/db");
 
 // require("./association");
@@ -9,47 +68,56 @@
 // require("./src/entity/conversation_member");
 // require("./src/entity/message");
 
-// const server = http.createServer(app);
+// const app = express();
 
-// require("./src/socket/socket")(server);
+// app.use(cors());
+// app.use(express.json());
 
-// const startServer = async () => {
-//   try {
-//     await connectDB();
-//     await sequelize.sync();
-//     const PORT = process.env.PORT || 5000;
-//     server.listen(PORT, () => console.log(`Server running on ${PORT}`));
-//   } catch (err) {
-//     console.error(err);
-//   }
-// };
+// connectDB()
+//   .then(() => sequelize.sync())
+//   .catch((err) => console.error("DB sync error:", err));
 
-// startServer();
+// app.use("/api/users", require("./src/modules/user/user.routes"));
+// app.use("/api/chat", require("./src/modules/"));
 
-// module.exports = { server };
+// app.get("/", (req, res) => {
+//   res.send("API is running");
+// });
 
-
+// module.exports = app;
 require("dotenv").config();
 
-const express = require("express");
-const cors = require("cors");
+const http = require("http");
+const app = require("./app");
 
-const { connectDB } = require("./config/db");
+const { connectDB, sequelize } = require("./config/db");
 
-const app = express();
+require("./association");
 
-app.use(cors());
-app.use(express.json());
+require("./src/entity/user");
+require("./src/entity/conversation");
+require("./src/entity/conversation_member");
+require("./src/entity/message");
 
-connectDB();
+const server = http.createServer(app);
 
-// Routes
-app.use("/api/users", require("./routes/userRoutes"));
-app.use("/api/chat", require("./routes/chatRoutes"));
+require("./src/socket/socket")(server);
 
-app.get("/", (req, res) => {
-  res.send("API is running");
-});
+const startServer = async () => {
+  try {
+    await connectDB();
 
-// IMPORTANT FOR VERCEL
-module.exports = app;
+    await sequelize.sync();
+
+    const PORT = process.env.PORT || 5000;
+
+    server.listen(PORT, () => {
+      console.log(`Server running on ${PORT}`);
+    });
+
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+startServer();
