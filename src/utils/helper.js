@@ -5,4 +5,4 @@ const getFileType = (mime) => {
   return "document";
 };
 
-module.exports = getFileType
+module.exports = getFileType;
